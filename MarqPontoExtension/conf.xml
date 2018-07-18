@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Fields>
+  <Field>
+    <Name>Server</Name>
+    <Value>https://jsonplaceholder.typicode.com/</Value>
+  </Field>
+
+  <!--Time In Minutes Before Alert View-->
+  <Field>
+    <Name>AlertTime</Name>
+    <Value>1</Value>
+  </Field>
+
+  <!-- Time In Seconds For PopUp Message -->
+  <Field>
+    <Name>PopUpTime</Name>
+    <Value>5</Value>
+  </Field>
+
+  <Field>
+    <Name>FadeAsDefault</Name>
+    <Value>0</Value>
+  </Field>
+  
+  <!--Custom Color-->
+  
+  <!--Value Exemple-->
+  
+  <!--DarkOrange-->
+  <!--Purple-->
+  <!--SteelBlue-->
+  <!--Tomato-->
+  <!--Yellow-->
+  <!--ForestGreen-->
+  <!--White-->
+  <!--Black-->
+
+  <Field>
+    <Name>GadgetColor</Name>
+    <Value>SteelBlue</Value>
+  </Field>
+
+  <Field>
+    <Name>PopUpColor</Name>
+    <Value>Purple</Value>
+  </Field>
+
+  <Field>
+    <Name>AlertColor</Name>
+    <Value>SteelBlue</Value>
+  </Field>
+
+  <!--Custom Color-->
+  <Field>
+    <Name>UserLogin</Name>
+    <Value>lucas.rocha@autotech.curitiba.br</Value>
+  </Field>
+  
+</Fields>
