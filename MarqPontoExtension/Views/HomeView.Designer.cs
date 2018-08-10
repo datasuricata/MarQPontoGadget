@@ -35,12 +35,15 @@
             this.ButtonPerfil = new System.Windows.Forms.Button();
             this.ButtonInfo = new System.Windows.Forms.Button();
             this.CloseForm = new System.Windows.Forms.Button();
+            this.SyncInfo = new System.Windows.Forms.Panel();
             this.info = new System.Windows.Forms.Label();
             this.status = new System.Windows.Forms.Label();
-            this.Timer = new System.Windows.Forms.Timer(this.components);
+            this.TimerMaster = new System.Windows.Forms.Timer(this.components);
             this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.BackGroundRequests = new System.ComponentModel.BackgroundWorker();
-            this.SyncInfo = new System.Windows.Forms.Panel();
+            this.BackGroundInteract = new System.ComponentModel.BackgroundWorker();
+            this.TimerInteractIn = new System.Windows.Forms.Timer(this.components);
+            this.TimerInteractOut = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // ToolTip
@@ -58,7 +61,7 @@
             this.LockForm.Name = "LockForm";
             this.LockForm.Size = new System.Drawing.Size(12, 11);
             this.LockForm.TabIndex = 9;
-            this.ToolTip.SetToolTip(this.LockForm, "Bloquear movimentaçã");
+            this.ToolTip.SetToolTip(this.LockForm, "Mover Gadget");
             this.LockForm.UseVisualStyleBackColor = true;
             this.LockForm.CheckedChanged += new System.EventHandler(this.LockForm_CheckedChanged);
             // 
@@ -105,6 +108,17 @@
             this.CloseForm.UseVisualStyleBackColor = false;
             this.CloseForm.Click += new System.EventHandler(this.CloseForm_Click);
             // 
+            // SyncInfo
+            // 
+            this.SyncInfo.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("SyncInfo.BackgroundImage")));
+            this.SyncInfo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.SyncInfo.Location = new System.Drawing.Point(30, 8);
+            this.SyncInfo.Name = "SyncInfo";
+            this.SyncInfo.Size = new System.Drawing.Size(22, 22);
+            this.SyncInfo.TabIndex = 16;
+            this.ToolTip.SetToolTip(this.SyncInfo, "BackGround Services");
+            this.SyncInfo.Visible = false;
+            // 
             // info
             // 
             this.info.ForeColor = System.Drawing.Color.White;
@@ -126,10 +140,10 @@
             this.status.TabIndex = 12;
             this.status.Text = "Trabalhando";
             // 
-            // Timer
+            // TimerMaster
             // 
-            this.Timer.Interval = 1000;
-            this.Timer.Tick += new System.EventHandler(this.timer_Tick);
+            this.TimerMaster.Interval = 1000;
+            this.TimerMaster.Tick += new System.EventHandler(this.timer_Tick);
             // 
             // NotifyIcon
             // 
@@ -143,16 +157,19 @@
             // 
             this.BackGroundRequests.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackGroundRequests_DoWork);
             // 
-            // SyncInfo
+            // BackGroundInteract
             // 
-            this.SyncInfo.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("SyncInfo.BackgroundImage")));
-            this.SyncInfo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.SyncInfo.Location = new System.Drawing.Point(30, 8);
-            this.SyncInfo.Name = "SyncInfo";
-            this.SyncInfo.Size = new System.Drawing.Size(22, 22);
-            this.SyncInfo.TabIndex = 16;
-            this.ToolTip.SetToolTip(this.SyncInfo, "BackGround Services");
-            this.SyncInfo.Visible = false;
+            this.BackGroundInteract.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackGroundInteract_DoWork);
+            // 
+            // TimerInteractIn
+            // 
+            this.TimerInteractIn.Interval = 1000;
+            this.TimerInteractIn.Tick += new System.EventHandler(this.TimerInteractIn_Tick);
+            // 
+            // TimerInteractOut
+            // 
+            this.TimerInteractOut.Interval = 1000;
+            this.TimerInteractOut.Tick += new System.EventHandler(this.TimerInteractOut_Tick);
             // 
             // HomeView
             // 
@@ -191,13 +208,16 @@
         private System.Windows.Forms.CheckBox LockForm;
         private System.Windows.Forms.Label info;
         private System.Windows.Forms.Label status;
-        private System.Windows.Forms.Timer Timer;
+        private System.Windows.Forms.Timer TimerMaster;
         private System.Windows.Forms.Button CloseForm;
         private System.Windows.Forms.Button ButtonPerfil;
         private System.Windows.Forms.Button ButtonInfo;
         private System.Windows.Forms.NotifyIcon NotifyIcon;
         private System.ComponentModel.BackgroundWorker BackGroundRequests;
         private System.Windows.Forms.Panel SyncInfo;
+        private System.ComponentModel.BackgroundWorker BackGroundInteract;
+        private System.Windows.Forms.Timer TimerInteractIn;
+        private System.Windows.Forms.Timer TimerInteractOut;
     }
 }
 

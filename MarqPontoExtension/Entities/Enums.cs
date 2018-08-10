@@ -9,4 +9,10 @@
         Incorrect = 4,
         Fault = 5
     }
+
+    public enum TypeRequest
+    {
+        GetInfos = 0,
+        GetAjustments = 1,
+    }
 }

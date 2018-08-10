@@ -19,11 +19,10 @@ namespace MarqPontoExtension
 {
     public partial class HomeView : Form
     {
-        #region Properties
+        #region [ Properties ]
 
         bool UseFader, LockPoint = true;
-        int timeWork, timeLeft;
-
+        int timeWork, timeLeft, interacts, timerIn, timerOut;
         Thread fadeIn, fadeOut;
         System.Drawing.Point lastPoint;
         Fader Fader;
@@ -32,38 +31,24 @@ namespace MarqPontoExtension
 
         #endregion
 
-        #region Ctor
+        #region [ Ctor ]
 
         public HomeView()
         {
             controller.LoginView(FormWindowState.Normal);
-
             UseFader = Convert.ToBoolean(XmlUtilities.GetInt("FadeAsDefault"));
-
             InitializeComponent();
         }
 
         #endregion
 
-        #region Components
+        #region [ Event Args Components ]
 
         private void CloseForm_Click(object sender, EventArgs e)
         {
             NotifyIcon.Visible = false;
             Dispose();
             Application.Exit();
-        }
-
-        private void timer_Tick(object sender, EventArgs e)
-        {
-            if (timeWork < timeLeft)
-            {
-                timeWork = timeWork + 1;
-                TimeSpan result = TimeSpan.FromSeconds(timeWork);
-                string fromTimeString = result.ToString("hh':'mm':'ss");
-                info.Text = Environment.UserName + " :  Tempo Trabalhado : " + fromTimeString;
-                SyncInfo.Visible = BackGroundRequests.IsBusy;
-            }
         }
 
         private void LockForm_CheckedChanged(object sender, EventArgs e)
@@ -87,7 +72,7 @@ namespace MarqPontoExtension
 
         #endregion
 
-        #region Event Args Startup
+        #region [ Event Args Startup ]
 
         private void MarqPonto_Load(object sender, EventArgs e)
         {
@@ -102,8 +87,12 @@ namespace MarqPontoExtension
                 GenerateFaderThread();
                 fadeIn.Start();
 
+                //TODO aplicar tempo da carga horária
                 timeLeft = 5000;
-                Timer.Start();
+
+                //Start Timer Counter
+                TimerMaster.Start();
+                TimerInteractIn.Start();
             }
 
             NotifyIcon.Visible = true;
@@ -119,7 +108,7 @@ namespace MarqPontoExtension
 
         #endregion
 
-        #region Event Args Mouse Handler
+        #region [ Event Args Mouse Handler ]
 
         private void MarqPonto_MouseDown(object sender, MouseEventArgs e)
         {
@@ -179,28 +168,82 @@ namespace MarqPontoExtension
                 Size = new Size(467, 38);
         }
 
-        #endregion 
+        #endregion
 
-        #region API Request
+        #region [ BackGround Interacts ]
 
         private async void BackGroundRequests_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            var request = await DataRequest.GetAll(_Employe.GetAll, Security.Token);
+            try
+            {
+                var request = await DataRequest.GetAll(_Employe.GetAll, Security.Token);
 
-            var employe = new Employe();
+                var employe = new Employe();
 
-            employe = request.ToObject<Employe>();
-            List<UserPointJson> result = JsonConvert.DeserializeObject<List<UserPointJson>>(employe.point.userPointJson);
+                employe = request.ToObject<Employe>();
+                List<UserPointJson> result = JsonConvert.DeserializeObject<List<UserPointJson>>(employe.point.userPointJson);
 
-            if (request != null)
-                MessageBox.Show(request.ToString(), "API BackGround Task Result");
+                if (request != null)
+                    MessageBox.Show(request.ToString(), "API BackGround Task Result");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "API BackGround Task Result");
+            }
+        }
 
+        private void BackGroundInteract_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            while (interacts < 10)
+            {
+                if (timerIn >= 10)
+                {
+                    //TODO abrir janela informando que o usuario foi bloqueado por interactividade
+                    //TODO enviar tempo sem iteractividade para a API
+                    MessageBox.Show("Tempo Sem Interação" + TimeSpan.FromSeconds(timerIn).ToString("hh':'mm':'ss"));
+                    ChangeTimerTasks();
+                    break;
+                }
+            }
+        }
 
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            if (timeWork < timeLeft)
+            {
+                timeWork++;
+                TimeSpan result = TimeSpan.FromSeconds(timeWork);
+                string fromTimeString = result.ToString("hh':'mm':'ss");
+                info.Text = Environment.UserName + " :  Tempo Trabalhado : " + fromTimeString;
+                SyncInfo.Visible = BackGroundRequests.IsBusy;
+            }
+        }
+
+        private void TimerInteractOut_Tick(object sender, EventArgs e)
+        {
+            //TODO valor do tempo que o timer de espera para proxima validação vai ficar correndo (Segundos)
+            if (timerOut < 30)
+                timerOut++;
+            else
+                ChangeTimerTasks();
+        }
+
+        private void TimerInteractIn_Tick(object sender, EventArgs e)
+        {
+            if (!BackGroundInteract.IsBusy)
+                BackGroundInteract.RunWorkerAsync();
+
+            //TODO valor do tempo que o timer de validação vai ficar correndo (Segundos)
+            if (timerIn < 30)
+            {
+                timerIn++;
+                SyncInfo.Visible = BackGroundRequests.IsBusy;
+            }
         }
 
         #endregion
 
-        #region Privates
+        #region [ Privates ]
 
         private void GenerateFaderThread()
         {
@@ -210,6 +253,27 @@ namespace MarqPontoExtension
             ThreadStart Out = new ThreadStart(Fader.FadeOut);
             fadeOut = new Thread(Out);
         }
+
+        private void ChangeTimerTasks()
+        {
+            if (TimerInteractIn.Enabled)
+            {
+                interacts = 0;
+                timerIn = 0;
+                TimerInteractIn.Stop();
+                TimerInteractOut.Start();
+            }
+
+            else if (TimerInteractOut.Enabled)
+            {
+                interacts = 0;
+                timerOut = 0;
+                TimerInteractOut.Stop();
+                TimerInteractIn.Start();
+            }
+        }
+
+
 
         #endregion
     }

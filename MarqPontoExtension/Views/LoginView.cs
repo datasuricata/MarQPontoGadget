@@ -156,21 +156,21 @@ namespace MarqPontoExtension.Views
 
         private async void Authenticate_Click(object sender, EventArgs e)
         {
-            count++;
+            //count++;
 
-            var request = await DataRequest.Authenticate(_Security.Authenticate, Login.Text, Pass.Text);
+            //var request = await DataRequest.Authenticate(_Security.Authenticate, Login.Text, Pass.Text);
 
-            if (request != null)
-            {
-                Security.Token = request.access_token;
+            //if (request != null)
+            //{
+            //    Security.Token = request.access_token;
                 Close();
-            }
+            //}
 
-            if (count >= 5)
-            {
-                MessageBox.Show("A quantidade de tentativas foi excedida, por favor, tente novamente mais tarde!", "MarqPonto Security");
-                Application.Exit();
-            }
+            //if (count >= 5)
+            //{
+            //    MessageBox.Show("A quantidade de tentativas foi excedida, por favor, tente novamente mais tarde!", "MarqPonto Security");
+            //    Application.Exit();
+            //}
         }
 
         #endregion

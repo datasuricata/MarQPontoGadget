@@ -13,7 +13,7 @@ namespace MarqPontoExtension.Requests
 {
     public class DataRequest
     {
-        private const string Error = "Tivemos algum problema com o servidor, nosso exército de robos estão trabalhando para fixar o erro: ";
+        private const string Error = "Tivemos algum problema com o servidor, não se preocupe, nosso exército de robos já está fixando o erro: ";
 
         public static async Task<dynamic> GetById(string endpoint, string id)
         {
@@ -55,7 +55,7 @@ namespace MarqPontoExtension.Requests
                         }
                         else
                         {
-                            throw new Exception("Tivemos algum problema com o servidor, nosso exército de robos estão trabalhando para fixar o erro: " + response.StatusCode);
+                            throw new Exception(Error + response.StatusCode);
                         }
                     }
                 }
