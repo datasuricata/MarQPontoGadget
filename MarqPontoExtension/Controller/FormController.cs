@@ -121,5 +121,24 @@ namespace MarqPontoExtension.Controller
                 }
             }
         }
+
+        public void BlockView(FormWindowState windowState)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+
+            if (Application.OpenForms["BlockView"] == null)
+            {
+                BlockView action = new BlockView();
+                action.Show();
+            }
+            else
+            {
+                {
+                    Application.OpenForms["BlockView"].Activate();
+                    Application.OpenForms["BlockView"].WindowState = windowState;
+                    Application.OpenForms["BlockView"].Show();
+                }
+            }
+        }
     }
 }

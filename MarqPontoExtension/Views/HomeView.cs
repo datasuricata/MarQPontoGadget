@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
@@ -170,9 +171,13 @@ namespace MarqPontoExtension
 
         #endregion
 
-        #region [ BackGround Interacts ]
+        #region [ Event Args Ex Hook ] 
 
-        private async void BackGroundRequests_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        #endregion
+
+        #region [ BackGround Tasks ]
+
+        private async void BackGroundRequests_DoWork(object sender, DoWorkEventArgs e)
         {
             try
             {
@@ -192,19 +197,19 @@ namespace MarqPontoExtension
             }
         }
 
-        private void BackGroundInteract_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        private void BackGroundInteract_DoWork(object sender, DoWorkEventArgs e)
         {
-            while (interacts < 10)
-            {
-                if (timerIn >= 10)
-                {
-                    //TODO abrir janela informando que o usuario foi bloqueado por interactividade
-                    //TODO enviar tempo sem iteractividade para a API
-                    MessageBox.Show("Tempo Sem Interação" + TimeSpan.FromSeconds(timerIn).ToString("hh':'mm':'ss"));
-                    ChangeTimerTasks();
-                    break;
-                }
-            }
+            controller.BlockView(FormWindowState.Normal);
+            //while (interacts < 10)
+            //{
+
+            //    if (timerIn >= 10)
+            //    {
+            //        break;
+            //        //TODO abrir janela informando que o usuario foi bloqueado por interactividade
+            //        //TODO enviar tempo sem iteractividade para a API
+            //    }
+            //}
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -225,20 +230,21 @@ namespace MarqPontoExtension
             if (timerOut < 30)
                 timerOut++;
             else
-                ChangeTimerTasks();
+                ChangeTimerTasks(sender, e);
+
         }
 
         private void TimerInteractIn_Tick(object sender, EventArgs e)
         {
             if (!BackGroundInteract.IsBusy)
-                BackGroundInteract.RunWorkerAsync();
+                if(Application.OpenForms["BlockView"] == null)
+                    BackGroundInteract.RunWorkerAsync();
 
             //TODO valor do tempo que o timer de validação vai ficar correndo (Segundos)
             if (timerIn < 30)
-            {
                 timerIn++;
-                SyncInfo.Visible = BackGroundRequests.IsBusy;
-            }
+            else
+                ChangeTimerTasks(sender, e);
         }
 
         #endregion
@@ -254,10 +260,12 @@ namespace MarqPontoExtension
             fadeOut = new Thread(Out);
         }
 
-        private void ChangeTimerTasks()
+        private void ChangeTimerTasks(object sender, EventArgs e)
         {
             if (TimerInteractIn.Enabled)
             {
+                SyncInfo.Visible = false;
+
                 interacts = 0;
                 timerIn = 0;
                 TimerInteractIn.Stop();
@@ -266,14 +274,14 @@ namespace MarqPontoExtension
 
             else if (TimerInteractOut.Enabled)
             {
+                SyncInfo.Visible = true;
+
                 interacts = 0;
                 timerOut = 0;
                 TimerInteractOut.Stop();
                 TimerInteractIn.Start();
             }
         }
-
-
 
         #endregion
     }

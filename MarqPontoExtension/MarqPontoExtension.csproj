@@ -90,6 +90,12 @@
     <Compile Include="Views\AlertView.Designer.cs">
       <DependentUpon>AlertView.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\BlockView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\BlockView.Designer.cs">
+      <DependentUpon>BlockView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\ConfigView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -125,6 +131,9 @@
     </Compile>
     <EmbeddedResource Include="Views\AlertView.resx">
       <DependentUpon>AlertView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\BlockView.resx">
+      <DependentUpon>BlockView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ConfigView.resx">
       <DependentUpon>ConfigView.cs</DependentUpon>
