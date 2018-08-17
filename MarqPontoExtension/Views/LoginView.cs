@@ -15,7 +15,6 @@ namespace MarqPontoExtension.Views
     {
         #region Parameters
 
-        FormController controller = new FormController();
         int count = 0;
 
         #endregion

@@ -8,12 +8,9 @@ using MarqPontoExtension.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MarqPontoExtension
@@ -28,15 +25,15 @@ namespace MarqPontoExtension
         System.Drawing.Point lastPoint;
         Fader Fader;
 
-        FormController controller = new FormController();
-
         #endregion
 
         #region [ Ctor ]
 
         public HomeView()
         {
-            controller.LoginView(FormWindowState.Normal);
+
+            FormController.LoginView();
+
             UseFader = Convert.ToBoolean(XmlUtilities.GetInt("FadeAsDefault"));
             InitializeComponent();
         }
@@ -59,8 +56,8 @@ namespace MarqPontoExtension
 
         private void ButtonPerfil_Click(object sender, EventArgs e)
         {
-            controller.EmployeView(FormWindowState.Normal);
-            controller.PopupView(FormWindowState.Normal);
+            FormController.EmployeView();
+            FormController.PopupView();
 
             SyncInfo.Visible = true;
             BackGroundRequests.RunWorkerAsync();
@@ -68,7 +65,7 @@ namespace MarqPontoExtension
 
         private void ButtonInfo_Click(object sender, EventArgs e)
         {
-            controller.ConfigView(FormWindowState.Normal);
+            FormController.ConfigView();
         }
 
         #endregion
@@ -199,17 +196,17 @@ namespace MarqPontoExtension
 
         private void BackGroundInteract_DoWork(object sender, DoWorkEventArgs e)
         {
-            controller.BlockView(FormWindowState.Normal);
-            //while (interacts < 10)
-            //{
+            while (interacts < 10)
+            {
 
-            //    if (timerIn >= 10)
-            //    {
-            //        break;
-            //        //TODO abrir janela informando que o usuario foi bloqueado por interactividade
-            //        //TODO enviar tempo sem iteractividade para a API
-            //    }
-            //}
+                if (timerIn >= 10)
+                {
+                    FormController.BlockView();
+                    break;
+                    //TODO abrir janela informando que o usuario foi bloqueado por interactividade
+                    //TODO enviar tempo sem iteractividade para a API
+                }
+            }
         }
 
         private void timer_Tick(object sender, EventArgs e)

@@ -3,12 +3,12 @@ using System.Windows.Forms;
 
 namespace MarqPontoExtension.Controller
 {
-    public class FormController
+    public static class FormController
     {
-        public string Message { get; set; }
-        public string Token { get; set; }
+        public static string Message { get; set; }
+        public static string Token { get; set; }
 
-        public void LoginView(FormWindowState windowState)
+        public static void LoginView(FormWindowState windowState = FormWindowState.Normal)
         {
             Cursor.Current = Cursors.WaitCursor;
 
@@ -26,8 +26,7 @@ namespace MarqPontoExtension.Controller
                 }
             }
         }
-
-        public void EmployeView(FormWindowState windowState)
+        public static void EmployeView(FormWindowState windowState = FormWindowState.Normal)
         {
             Cursor.Current = Cursors.WaitCursor;
 
@@ -45,8 +44,7 @@ namespace MarqPontoExtension.Controller
                 }
             }
         }
-
-        public void AlertView(FormWindowState windowState)
+        public static void AlertView(FormWindowState windowState = FormWindowState.Normal)
         {
             Cursor.Current = Cursors.WaitCursor;
 
@@ -64,8 +62,7 @@ namespace MarqPontoExtension.Controller
                 }
             }
         }
-
-        public void PopupView(FormWindowState windowState)
+        public static void PopupView(FormWindowState windowState = FormWindowState.Normal)
         {
             Cursor.Current = Cursors.WaitCursor;
 
@@ -83,8 +80,7 @@ namespace MarqPontoExtension.Controller
                 }
             }
         }
-
-        public void HomeView(FormWindowState windowState)
+        public static void HomeView(FormWindowState windowState = FormWindowState.Normal)
         {
             Cursor.Current = Cursors.WaitCursor;
 
@@ -102,8 +98,7 @@ namespace MarqPontoExtension.Controller
                 }
             }
         }
-
-        public void ConfigView(FormWindowState windowState)
+        public static void ConfigView(FormWindowState windowState = FormWindowState.Normal)
         {
             Cursor.Current = Cursors.WaitCursor;
 
@@ -121,8 +116,7 @@ namespace MarqPontoExtension.Controller
                 }
             }
         }
-
-        public void BlockView(FormWindowState windowState)
+        public static void BlockView(FormWindowState windowState = FormWindowState.Normal)
         {
             Cursor.Current = Cursors.WaitCursor;
 
@@ -130,6 +124,7 @@ namespace MarqPontoExtension.Controller
             {
                 BlockView action = new BlockView();
                 action.Show();
+               // action.Hide();
             }
             else
             {
@@ -139,6 +134,36 @@ namespace MarqPontoExtension.Controller
                     Application.OpenForms["BlockView"].Show();
                 }
             }
+        }
+
+        public static void BaseView(Form form, string formName, FormWindowState windowState = FormWindowState.Normal)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+
+            if (Application.OpenForms[formName] == null)
+            {
+                form = new Form();
+                form.Show();
+            }
+            else
+            {
+                {
+                    Application.OpenForms[formName].Activate();
+                    Application.OpenForms[formName].WindowState = windowState;
+                    Application.OpenForms[formName].Show();
+                }
+            }
+        }
+
+        //TODO transformar em extension
+        public static void HideView(string formName)
+        {
+            Application.OpenForms[formName].Hide();
+        }
+        public static void ShowView(string formName)
+        {
+            Application.OpenForms[formName].Activate();
+            Application.OpenForms[formName].Show();
         }
     }
 }
