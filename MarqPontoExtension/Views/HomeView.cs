@@ -19,9 +19,10 @@ namespace MarqPontoExtension
     {
         #region [ Properties ]
 
-        bool UseFader, LockPoint = true;
+        bool useFader, userLock, lockPoint = true;
         int timeWork, timeLeft, interacts, timerIn, timerOut;
-        Thread fadeIn, fadeOut;
+        ThreadStart thS;
+        Thread fadeIn, fadeOut, th;
         System.Drawing.Point lastPoint;
         Fader Fader;
 
@@ -33,8 +34,9 @@ namespace MarqPontoExtension
         {
 
             FormController.LoginView();
+            useFader = Convert.ToBoolean(XmlUtilities.GetInt("FadeAsDefault"));
+            thS = new ThreadStart(() => OpenBlockView());
 
-            UseFader = Convert.ToBoolean(XmlUtilities.GetInt("FadeAsDefault"));
             InitializeComponent();
         }
 
@@ -51,7 +53,7 @@ namespace MarqPontoExtension
 
         private void LockForm_CheckedChanged(object sender, EventArgs e)
         {
-            LockPoint = LockForm.Checked;
+            lockPoint = LockForm.Checked;
         }
 
         private void ButtonPerfil_Click(object sender, EventArgs e)
@@ -82,7 +84,7 @@ namespace MarqPontoExtension
                 TransparencyKey = Color.Lime;
                 Opacity = Fader.idleOpacity;
 
-                GenerateFaderThread();
+                FaderThread();
                 fadeIn.Start();
 
                 //TODO aplicar tempo da carga horária
@@ -115,7 +117,7 @@ namespace MarqPontoExtension
 
         private void MarqPonto_MouseMove(object sender, MouseEventArgs e)
         {
-            if (!LockPoint)
+            if (!lockPoint)
                 if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right)
                 {
                     Left += e.X - lastPoint.X;
@@ -134,7 +136,7 @@ namespace MarqPontoExtension
             if (fadeOut.ThreadState == ThreadState.Running)
                 fadeOut.Abort();
 
-            if (UseFader)
+            if (useFader)
             {
                 ThreadStart fadeOutStart = new ThreadStart(Fader.FadeOut);
                 fadeOut = new Thread(fadeOutStart);
@@ -154,7 +156,7 @@ namespace MarqPontoExtension
             if (fadeOut.ThreadState == ThreadState.Running)
                 fadeOut.Abort();
 
-            if (UseFader)
+            if (useFader)
             {
                 ThreadStart fadeInStart = new ThreadStart(Fader.FadeIn);
                 fadeIn = new Thread(fadeInStart);
@@ -199,13 +201,26 @@ namespace MarqPontoExtension
             while (interacts < 10)
             {
 
-                if (timerIn >= 10)
+                if (timerIn == 10)
                 {
-                    FormController.BlockView();
-                    break;
+                    if (th != null)
+                        if (th.ThreadState == ThreadState.Running)
+                        {
+                            ChangeTimerTasks(sender, e);
+                            break;
+                        }
+
+                    OpenBlockView();
                     //TODO abrir janela informando que o usuario foi bloqueado por interactividade
                     //TODO enviar tempo sem iteractividade para a API
                 }
+
+
+
+                //if (timerIn > 10 && Application.OpenForms["LoginView"] != null)
+                //{
+                //    break;
+                //}
             }
         }
 
@@ -234,7 +249,6 @@ namespace MarqPontoExtension
         private void TimerInteractIn_Tick(object sender, EventArgs e)
         {
             if (!BackGroundInteract.IsBusy)
-                if(Application.OpenForms["BlockView"] == null)
                     BackGroundInteract.RunWorkerAsync();
 
             //TODO valor do tempo que o timer de validação vai ficar correndo (Segundos)
@@ -248,7 +262,7 @@ namespace MarqPontoExtension
 
         #region [ Privates ]
 
-        private void GenerateFaderThread()
+        private void FaderThread()
         {
             ThreadStart In = new ThreadStart(Fader.FadeIn);
             fadeIn = new Thread(In);
@@ -262,7 +276,7 @@ namespace MarqPontoExtension
             if (TimerInteractIn.Enabled)
             {
                 SyncInfo.Visible = false;
-
+                
                 interacts = 0;
                 timerIn = 0;
                 TimerInteractIn.Stop();
@@ -278,6 +292,12 @@ namespace MarqPontoExtension
                 TimerInteractOut.Stop();
                 TimerInteractIn.Start();
             }
+        }
+
+        private void OpenBlockView()
+        {
+            th = new Thread(() => FormController.BlockView());
+            th.Start();
         }
 
         #endregion

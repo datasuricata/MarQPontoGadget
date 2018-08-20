@@ -148,6 +148,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "LoginView";
+            this.TopMost = true;
             this.Load += new System.EventHandler(this.LoginView_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.LoginView_Paint);
             this.ResumeLayout(false);
