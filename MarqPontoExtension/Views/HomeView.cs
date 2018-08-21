@@ -5,6 +5,7 @@ using MarqPontoExtension.Endpoints.Base;
 using MarqPontoExtension.Entities;
 using MarqPontoExtension.Requests;
 using MarqPontoExtension.Utils;
+using MarqPontoExtension.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -21,8 +22,7 @@ namespace MarqPontoExtension
 
         bool useFader, userLock, lockPoint = true;
         int timeWork, timeLeft, interacts, timerIn, timerOut;
-        ThreadStart thS;
-        Thread fadeIn, fadeOut, th;
+        Thread fadeIn, fadeOut, thView;
         System.Drawing.Point lastPoint;
         Fader Fader;
 
@@ -35,7 +35,6 @@ namespace MarqPontoExtension
 
             FormController.LoginView();
             useFader = Convert.ToBoolean(XmlUtilities.GetInt("FadeAsDefault"));
-            thS = new ThreadStart(() => OpenBlockView());
 
             InitializeComponent();
         }
@@ -196,32 +195,27 @@ namespace MarqPontoExtension
             }
         }
 
+        private void BackGroundInteract_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            ChangeTimerTasks();
+        }
+
         private void BackGroundInteract_DoWork(object sender, DoWorkEventArgs e)
         {
+            thView = new Thread(new ThreadStart(OpenBlockView));
+         // var thTimer = new Thread(new ThreadStart(ChangeTimerTasks(sender, e));
+
             while (interacts < 10)
             {
-
                 if (timerIn == 10)
                 {
-                    if (th != null)
-                        if (th.ThreadState == ThreadState.Running)
-                        {
-                            ChangeTimerTasks(sender, e);
+                    if (thView != null)
+                        if (thView.ThreadState == ThreadState.Running)
                             break;
-                        }
-
-                    OpenBlockView();
-                    //TODO abrir janela informando que o usuario foi bloqueado por interactividade
-                    //TODO enviar tempo sem iteractividade para a API
+                    thView.Start();
                 }
-
-
-
-                //if (timerIn > 10 && Application.OpenForms["LoginView"] != null)
-                //{
-                //    break;
-                //}
             }
+            //TODO enviar tempo sem iteractividade para a API
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -242,20 +236,25 @@ namespace MarqPontoExtension
             if (timerOut < 30)
                 timerOut++;
             else
-                ChangeTimerTasks(sender, e);
+                ChangeTimerTasks();
 
         }
 
         private void TimerInteractIn_Tick(object sender, EventArgs e)
         {
             if (!BackGroundInteract.IsBusy)
-                    BackGroundInteract.RunWorkerAsync();
+                BackGroundInteract.RunWorkerAsync();
 
-            //TODO valor do tempo que o timer de validação vai ficar correndo (Segundos)
+            if (thView != null)
+            {
+                if (thView.ThreadState == ThreadState.Running)
+                    thView.Abort();
+            }
+
             if (timerIn < 30)
                 timerIn++;
             else
-                ChangeTimerTasks(sender, e);
+                ChangeTimerTasks();
         }
 
         #endregion
@@ -271,12 +270,12 @@ namespace MarqPontoExtension
             fadeOut = new Thread(Out);
         }
 
-        private void ChangeTimerTasks(object sender, EventArgs e)
+        private void ChangeTimerTasks()
         {
             if (TimerInteractIn.Enabled)
             {
                 SyncInfo.Visible = false;
-                
+
                 interacts = 0;
                 timerIn = 0;
                 TimerInteractIn.Stop();
@@ -296,8 +295,7 @@ namespace MarqPontoExtension
 
         private void OpenBlockView()
         {
-            th = new Thread(() => FormController.BlockView());
-            th.Start();
+            Application.Run(new BlockView());
         }
 
         #endregion

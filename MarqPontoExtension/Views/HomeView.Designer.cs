@@ -160,6 +160,7 @@
             // BackGroundInteract
             // 
             this.BackGroundInteract.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackGroundInteract_DoWork);
+            this.BackGroundInteract.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackGroundInteract_RunWorkerCompleted);
             // 
             // TimerInteractIn
             // 
